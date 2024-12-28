@@ -433,7 +433,13 @@ if __name__=="__main__":
 		ppo.SaveModel()  
   
 	file_name_reward_path = '../reward/episode_reward_' + args.algorithm + '_' + args.type + '.npy'   
- 
+	
+	wandb.config = {}
+	wandb.init(project=args.wandb_project,
+					entity=args.wandb_entity,
+					# group=args.wandb_group,
+					config=wandb.config,
+					name=args.wandb_name)
 	print('num states: {}, num actions: {}'.format(ppo.env.GetNumState(),ppo.env.GetNumAction()))
 	for i in range(ppo.max_iteration-5):
 		ppo.Train()  
