@@ -68,37 +68,14 @@ make -j8
 - Run Training
 ```bash
 cd python
-source /path/to/virtualenv/
-python3 main.py -d ../data/metadata.txt
+conda activate exo 
+python3 main.py -d ../data/metadata_mass_wm.txt -a mass -t wm  
 ```
-
-All the training networks are saved in /nn folder.
-
-- Run UI
-```bash
-source /path/to/virtualenv/
-./render/render ../data/metadata.txt
-```
-
-- Run Trained data
-```bash
-source /path/to/virtualenv/
-./render/render ../data/metadata.txt ../nn/xxx.pt ../nn/xxx_muscle.pt
-```
-
-If you are simulating with the torque-actuated model, 
-```bash
-source /path/to/virtualenv/
-./render/render ../data/metadata.txt ../nn/xxx.pt
-```
-
-
-## Model Creation & Retargeting (This module is ongoing project.)
-
-### This requires Maya and MotionBuilder.
-
-There is a sample model in data/maya folder that I generally use. Currently if you are trying to edit the model, you have to make your own export maya-python code and xml writer so that the simulation code correctly read the musculoskeletal structure. 
-There is also a rig model that is useful to retarget a new motion. 
-
 
 ## Jimmy experiments 
+open another terminal 
+```bash
+cd python
+conda activate exo 
+python3 main.py -d ../data/metadata_mass_wo.txt -a mass -t wo  
+```

@@ -14,7 +14,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-import torchvision.transforms as T
+import torchvision.transforms as T  
+
+import wandb  
 
 import numpy as np
 import pymss
@@ -58,7 +60,7 @@ class ReplayBuffer(object):
 	def Clear(self):
 		self.buffer.clear()
 class PPO(object):
-	def __init__(self,meta_file):
+	def __init__(self,meta_file, max_iteration=50000):
 		np.random.seed(seed = int(time.time()))
 		self.num_slaves = 16
 		self.env = pymss.pymss(meta_file,self.num_slaves)
@@ -99,7 +101,7 @@ class PPO(object):
 		self.clip_ratio = self.default_clip_ratio
 		self.optimizer = optim.Adam(self.model.parameters(),lr=self.learning_rate)
 		self.optimizer_muscle = optim.Adam(self.muscle_model.parameters(),lr=self.learning_rate)
-		self.max_iteration = 50000
+		self.max_iteration = max_iteration  
 
 		self.w_entropy = -0.001
 
@@ -170,6 +172,7 @@ class PPO(object):
 		self.muscle_buffer['L'] = self.env.GetMuscleTuplesL()
 		self.muscle_buffer['b'] = self.env.GetMuscleTuplesb()
 		print(self.muscle_buffer['JtA'].shape)
+	
 	def GenerateTransitions(self):
 		self.total_episodes = []
 		states = [None]*self.num_slaves
@@ -316,6 +319,7 @@ class PPO(object):
 			print('Optimizing muscle nn : {}/{}'.format(j+1,self.num_epochs_muscle),end='\r')
 		self.loss_muscle = loss.cpu().detach().numpy().tolist()
 		print('')
+
 	def OptimizeModel(self):
 		self.ComputeTDandGAE()
 		self.OptimizeSimulationNN()
@@ -325,7 +329,6 @@ class PPO(object):
 	def Train(self):
 		self.GenerateTransitions()
 		self.OptimizeModel()
-
 
 	def Evaluate(self):
 		self.num_evaluation = self.num_evaluation + 1
@@ -357,6 +360,21 @@ class PPO(object):
 		self.rewards.append(self.sum_return/self.num_episode)
 		
 		self.SaveModel()
+  
+		print('=============================================')
+		wandb.log({
+      		"Loss Actor": self.loss_actor,
+			"Loss Critic": self.loss_critic,
+			"Loss Muscle": self.loss_muscle,
+			"Num Transition So far": self.num_tuple_so_far,
+			"Num Transition": self.num_tuple,
+			"Num Episode": self.num_episode,
+			"Avg Return per episode": self.sum_return/self.num_episode,
+			"Avg Reward per transition": self.sum_return/self.num_tuple,
+			"Avg Step per episode": self.num_tuple/self.num_episode,
+			"Max Avg Retun So far": self.max_return,
+			"Max Avg Return Epoch": self.max_return_epoch}
+		)
 		
 		print('=============================================')
 		return np.array(self.rewards)
@@ -389,27 +407,39 @@ def Plot(y,title,num_fig=1,ylim=True):
 	plt.pause(0.001)
 
 import argparse
-import os
-if __name__=="__main__":
-	parser = argparse.ArgumentParser()
-	parser.add_argument('-m','--model',help='model path')
-	parser.add_argument('-d','--meta',help='meta file')
+import os  
+if __name__=="__main__":     
+	parser = argparse.ArgumentParser()     
+	parser.add_argument('-m','--model',help='model path')    
+	parser.add_argument('-d','--meta',help='meta file')    
+	parser.add_argument('-a','--algorithm',help='mass nature tmech')    
+	parser.add_argument('-t','--type',help='wm: with muscle, wo: without muscle')     
 
-	args =parser.parse_args()
-	if args.meta is None:
-		print('Provide meta file')
-		exit()
+	parser.add_argument('--maxiterations',type=int, default=50000, help='meta file')    
 
-	ppo = PPO(args.meta)
-	nn_dir = '../nn'
-	if not os.path.exists(nn_dir):
-	    os.makedirs(nn_dir)
-	if args.model is not None:
-		ppo.LoadModel(args.model)
-	else:
-		ppo.SaveModel()
+	args =parser.parse_args()   
+	if args.meta is None:   
+		print('Provide meta file')   
+		exit()  
+
+	ppo = PPO(args.meta)    
+	nn_dir = '../nn'   
+	if not os.path.exists(nn_dir):     
+		os.makedirs(nn_dir)    
+
+	if args.model is not None:  
+		ppo.LoadModel(args.model)  
+	else:  
+		ppo.SaveModel()  
+  
+	file_name_reward_path = '../reward/episode_reward_' + args.algorithm + '_' + args.type + '.npy'   
+ 
 	print('num states: {}, num actions: {}'.format(ppo.env.GetNumState(),ppo.env.GetNumAction()))
 	for i in range(ppo.max_iteration-5):
-		ppo.Train()
-		rewards = ppo.Evaluate()
-		Plot(rewards,'reward',0,False)
+		ppo.Train()  
+		rewards = ppo.Evaluate()   
+
+		# Plot(rewards,'reward',0,False)    
+
+		if i%100 == 0: 
+			np.save(file_name_reward_path, rewards)    
