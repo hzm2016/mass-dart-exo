@@ -413,7 +413,12 @@ if __name__=="__main__":
 	parser.add_argument('-m','--model',help='model path')    
 	parser.add_argument('-d','--meta',help='meta file')    
 	parser.add_argument('-a','--algorithm',help='mass nature tmech')    
-	parser.add_argument('-t','--type',help='wm: with muscle, wo: without muscle')     
+	parser.add_argument('-t','--type',help='wm: with muscle, wo: without muscle')   
+ 
+	parser.add_argument('--wandb_project', default='Zhimin_TMech', help='wandb project name')
+	parser.add_argument('--wandb_entity', default='markzhumi1805', help='wandb entity name')
+	parser.add_argument('--wandb_name', default='Test', help='wandb run name')
+	parser.add_argument('--wandb_notes', default='', help='wandb notes')
 
 	parser.add_argument('--maxiterations',type=int, default=50000, help='meta file')    
 
