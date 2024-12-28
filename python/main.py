@@ -362,19 +362,19 @@ class PPO(object):
 		self.SaveModel()
   
 		print('=============================================')
-		wandb.log({
-      		"Loss Actor": self.loss_actor,
-			"Loss Critic": self.loss_critic,
-			"Loss Muscle": self.loss_muscle,
-			"Num Transition So far": self.num_tuple_so_far,
-			"Num Transition": self.num_tuple,
-			"Num Episode": self.num_episode,
-			"Avg Return per episode": self.sum_return/self.num_episode,
-			"Avg Reward per transition": self.sum_return/self.num_tuple,
-			"Avg Step per episode": self.num_tuple/self.num_episode,
-			"Max Avg Retun So far": self.max_return,
-			"Max Avg Return Epoch": self.max_return_epoch}
-		)
+		# wandb.log({
+      	# 	"Loss Actor": self.loss_actor,
+		# 	"Loss Critic": self.loss_critic,
+		# 	"Loss Muscle": self.loss_muscle,
+		# 	"Num Transition So far": self.num_tuple_so_far,
+		# 	"Num Transition": self.num_tuple,
+		# 	"Num Episode": self.num_episode,
+		# 	"Avg Return per episode": self.sum_return/self.num_episode,
+		# 	"Avg Reward per transition": self.sum_return/self.num_tuple,
+		# 	"Avg Step per episode": self.num_tuple/self.num_episode,
+		# 	"Max Avg Retun So far": self.max_return,
+		# 	"Max Avg Return Epoch": self.max_return_epoch}
+		# )
 		
 		print('=============================================')
 		return np.array(self.rewards)
@@ -432,6 +432,10 @@ if __name__=="__main__":
 	if not os.path.exists(nn_dir):     
 		os.makedirs(nn_dir)    
 
+	reward_dir = '../reward'   
+	if not os.path.exists(reward_dir):     
+		os.makedirs(reward_dir)    
+
 	if args.model is not None:  
 		ppo.LoadModel(args.model)  
 	else:  
@@ -439,12 +443,13 @@ if __name__=="__main__":
   
 	file_name_reward_path = '../reward/episode_reward_' + args.algorithm + '_' + args.type + '.npy'   
 	
-	wandb.config = {}
-	wandb.init(project=args.wandb_project,
-					entity=args.wandb_entity,
-					# group=args.wandb_group,
-					config=wandb.config,
-					name=args.wandb_name)
+	# wandb.config = {}
+	# wandb.init(project=args.wandb_project,
+	# 				entity=args.wandb_entity,
+	# 				# group=args.wandb_group,
+	# 				config=wandb.config,
+	# 				name=args.wandb_name) 
+ 
 	print('num states: {}, num actions: {}'.format(ppo.env.GetNumState(),ppo.env.GetNumAction()))
 	for i in range(ppo.max_iteration-5):
 		ppo.Train()  
