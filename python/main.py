@@ -60,8 +60,10 @@ class ReplayBuffer(object):
 	def Clear(self):
 		self.buffer.clear()
 class PPO(object):
-	def __init__(self,meta_file, max_iteration=50000):
+	def __init__(self,meta_file, max_iteration=50000, model_path='../nn/'):  
 		np.random.seed(seed = int(time.time()))
+
+		self.model_path = model_path 
 		self.num_slaves = 16
 		self.env = pymss.pymss(meta_file,self.num_slaves)
 		self.use_muscle = self.env.UseMuscle()
@@ -119,16 +121,16 @@ class PPO(object):
 			self.episodes[j] = EpisodeBuffer()
 		self.env.Resets(True)
 
-	def SaveModel(self):
-		self.model.save('../nn/current.pt')
-		self.muscle_model.save('../nn/current_muscle.pt')
+	def SaveModel(self,):
+		self.model.save(self.model_path + 'current.pt')
+		self.muscle_model.save(self.model_path + 'current_muscle.pt')
 		
 		if self.max_return_epoch == self.num_evaluation:
-			self.model.save('../nn/max.pt')
-			self.muscle_model.save('../nn/max_muscle.pt')
+			self.model.save(self.model_path + 'max.pt')  
+			self.muscle_model.save(self.model_path + 'max_muscle.pt')
 		if self.num_evaluation%100 == 0:
-			self.model.save('../nn/'+str(self.num_evaluation//100)+'.pt')
-			self.muscle_model.save('../nn/'+str(self.num_evaluation//100)+'_muscle.pt')
+			self.model.save(self.model_path+str(self.num_evaluation//100)+'.pt')  
+			self.muscle_model.save(self.model_path+str(self.num_evaluation//100)+'_muscle.pt')
 
 	def LoadModel(self,path):
 		self.model.load('../nn/'+path+'.pt')
@@ -412,7 +414,7 @@ if __name__=="__main__":
 	parser.add_argument('-d','--meta',help='meta file')    
 	parser.add_argument('-a','--algorithm',help='mass nature tmech')    
 	parser.add_argument('-t','--type',help='wm: with muscle, wo: without muscle')   
- 
+	parser.add_argument('-sp','--save_path',default='nn',help='save model path')  
 	parser.add_argument('-wp', '--wandb_project', default='junxi_training', help='wandb project name')
 	parser.add_argument('--wandb_entity', default='markzhumi1805', help='wandb entity name')
 	parser.add_argument('-wn', '--wandb_name', default='Test', help='wandb run name')
@@ -425,13 +427,14 @@ if __name__=="__main__":
 		print('Provide meta file')   
 		exit()  
 
-	ppo = PPO(args.meta)    
-	nn_dir = '../nn'   
-	if not os.path.exists(nn_dir):     
+	nn_dir = '../trained_policy/' + args.save_path + '/'    
+	if not os.path.exists(nn_dir):         
 		os.makedirs(nn_dir)    
+  
+	ppo = PPO(args.meta, model_path=nn_dir)      
 
 	reward_dir = '../reward'   
-	if not os.path.exists(reward_dir):     
+	if not os.path.exists(reward_dir):        
 		os.makedirs(reward_dir)    
 
 	if args.model is not None:  
@@ -442,7 +445,8 @@ if __name__=="__main__":
 	file_name_reward_path = '../reward/episode_reward_' + args.algorithm + '_' + args.type + '.npy'   
 	
 	wandb.init(
-		project=args.wandb_project
+		project=args.wandb_project,
+		name=args.wandb_name
     ) 
  
 	print('num states: {}, num actions: {}'.format(ppo.env.GetNumState(),ppo.env.GetNumAction()))
