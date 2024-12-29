@@ -415,8 +415,8 @@ if __name__=="__main__":
  
 	parser.add_argument('-wp', '--wandb_project', default='junxi_training', help='wandb project name')
 	parser.add_argument('--wandb_entity', default='markzhumi1805', help='wandb entity name')
-	parser.add_argument('wn', '--wandb_name', default='Test', help='wandb run name')
-	parser.add_argument('--wandb_notes', default='', help='wandb notes')
+	parser.add_argument('-wn', '--wandb_name', default='Test', help='wandb run name')
+	parser.add_argument('-ws', '--wandb_notes', default='', help='wandb notes')
 
 	parser.add_argument('--maxiterations',type=int, default=50000, help='meta file')    
 

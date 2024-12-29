@@ -77,6 +77,6 @@ open another terminal
 ```bash
 cd python
 conda activate exo 
-python3 main.py -d ../data/metadata_mass_wo.txt -a mass -t wo -wp mass-with-muscle
+python3 main.py -d ../data/metadata_mass_wo.txt -a mass -t wo -wp mass-with-muscle -wn mass-without-muscle -ws secondrun
 ```
 ```

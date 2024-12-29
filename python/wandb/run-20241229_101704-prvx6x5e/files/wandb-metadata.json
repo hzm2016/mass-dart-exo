@@ -1,0 +1,43 @@
+{
+  "os":  "Linux-5.15.0-119-generic-x86_64-with-glibc2.17",
+  "python":  "CPython 3.8.19",
+  "startedAt":  "2024-12-29T02:17:04.460699Z",
+  "args":  [
+    "-d",
+    "../data/metadata_mass_wo.txt",
+    "-a",
+    "mass",
+    "-t",
+    "wo",
+    "-wp",
+    "mass-with-muscle",
+    "-wn",
+    "mass-without-muscle"
+  ],
+  "program":  "main.py",
+  "codePath":  "python/main.py",
+  "git":  {
+    "remote":  "git@github.com:hzm2016/mass-dart-exo.git",
+    "commit":  "ccad06eb87f7297735dca5859b6caea34602a65a"
+  },
+  "email":  "houzm1994@gmail.com",
+  "root":  "/home/harlab/1-ncsu/mass-dart-exo/python",
+  "host":  "harlab-X1",
+  "executable":  "/home/harlab/anaconda3/envs/exo/bin/python3",
+  "codePathLocal":  "main.py",
+  "cpu_count":  12,
+  "cpu_count_logical":  16,
+  "disk":  {
+    "/":  {
+      "total":  "16017379328",
+      "used":  "14957531136"
+    }
+  },
+  "memory":  {
+    "total":  "16358588416"
+  },
+  "cpu":  {
+    "count":  12,
+    "countLogical":  16
+  }
+}

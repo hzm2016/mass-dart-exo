@@ -1,0 +1,221 @@
+num states: 136, num actions: 50
+SIM : 1922
+(0, 0)
+Optimizing sim nn : 10/10
+# 1 === 0h:0m:4s ===
+||Loss Actor               : -0.0589
+||Loss Critic              : 0.0690
+||Loss Muscle              : 0.0000
+||Noise                    : 1.000
+||Num Transition So far    : 1922
+||Num Transition           : 1922
+||Num Episode              : 85
+||Avg Return per episode   : 1.962
+||Avg Reward per transition: 0.087
+||Avg Step per episode     : 22.6
+||Max Avg Retun So far     : 1.962 at #1
+save simulation nn ../nn/current.pt
+save muscle nn ../nn/current_muscle.pt
+save simulation nn ../nn/max.pt
+save muscle nn ../nn/max_muscle.pt
+=============================================
+=============================================
+SIM : 1947
+(0, 0)
+Optimizing sim nn : 10/10
+# 2 === 0h:0m:7s ===
+||Loss Actor               : -0.0635
+||Loss Critic              : 0.0320
+||Loss Muscle              : 0.0000
+||Noise                    : 1.000
+||Num Transition So far    : 3869
+||Num Transition           : 1947
+||Num Episode              : 80
+||Avg Return per episode   : 2.087
+||Avg Reward per transition: 0.086
+||Avg Step per episode     : 24.3
+||Max Avg Retun So far     : 2.087 at #2
+save simulation nn ../nn/current.pt
+save muscle nn ../nn/current_muscle.pt
+save simulation nn ../nn/max.pt
+save muscle nn ../nn/max_muscle.pt
+=============================================
+=============================================
+SIM : 2068
+(0, 0)
+Optimizing sim nn : 10/10
+# 3 === 0h:0m:10s ===
+||Loss Actor               : -0.0522
+||Loss Critic              : 0.0286
+||Loss Muscle              : 0.0000
+||Noise                    : 0.999
+||Num Transition So far    : 5937
+||Num Transition           : 2068
+||Num Episode              : 86
+||Avg Return per episode   : 2.106
+||Avg Reward per transition: 0.088
+||Avg Step per episode     : 24.0
+||Max Avg Retun So far     : 2.106 at #3
+save simulation nn ../nn/current.pt
+save muscle nn ../nn/current_muscle.pt
+save simulation nn ../nn/max.pt
+save muscle nn ../nn/max_muscle.pt
+=============================================
+=============================================
+SIM : 2094
+(0, 0)
+Optimizing sim nn : 10/10
+# 4 === 0h:0m:13s ===
+||Loss Actor               : -0.0806
+||Loss Critic              : 0.0150
+||Loss Muscle              : 0.0000
+||Noise                    : 0.997
+||Num Transition So far    : 8031
+||Num Transition           : 2094
+||Num Episode              : 87
+||Avg Return per episode   : 2.096
+||Avg Reward per transition: 0.087
+||Avg Step per episode     : 24.1
+||Max Avg Retun So far     : 2.106 at #3
+save simulation nn ../nn/current.pt
+save muscle nn ../nn/current_muscle.pt
+=============================================
+=============================================
+SIM : 2028
+(0, 0)
+Optimizing sim nn : 10/10
+# 5 === 0h:0m:18s ===
+||Loss Actor               : -0.0747
+||Loss Critic              : 0.0208
+||Loss Muscle              : 0.0000
+||Noise                    : 0.997
+||Num Transition So far    : 10059
+||Num Transition           : 2028
+||Num Episode              : 88
+||Avg Return per episode   : 2.063
+||Avg Reward per transition: 0.090
+||Avg Step per episode     : 23.0
+||Max Avg Retun So far     : 2.106 at #3
+save simulation nn ../nn/current.pt
+save muscle nn ../nn/current_muscle.pt
+=============================================
+=============================================
+SIM : 2068
+(0, 0)
+Optimizing sim nn : 10/10
+# 6 === 0h:0m:23s ===
+||Loss Actor               : -0.0736
+||Loss Critic              : 0.0208
+||Loss Muscle              : 0.0000
+||Noise                    : 0.996
+||Num Transition So far    : 12127
+||Num Transition           : 2068
+||Num Episode              : 87
+||Avg Return per episode   : 2.085
+||Avg Reward per transition: 0.088
+||Avg Step per episode     : 23.8
+||Max Avg Retun So far     : 2.106 at #3
+save simulation nn ../nn/current.pt
+save muscle nn ../nn/current_muscle.pt
+=============================================
+=============================================
+SIM : 2088
+(0, 0)
+Optimizing sim nn : 10/10
+# 7 === 0h:0m:28s ===
+||Loss Actor               : -0.0687
+||Loss Critic              : 0.0141
+||Loss Muscle              : 0.0000
+||Noise                    : 0.996
+||Num Transition So far    : 14215
+||Num Transition           : 2088
+||Num Episode              : 88
+||Avg Return per episode   : 2.095
+||Avg Reward per transition: 0.088
+||Avg Step per episode     : 23.7
+||Max Avg Retun So far     : 2.106 at #3
+save simulation nn ../nn/current.pt
+save muscle nn ../nn/current_muscle.pt
+=============================================
+=============================================
+SIM : 2020
+(0, 0)
+Optimizing sim nn : 10/10
+# 8 === 0h:0m:32s ===
+||Loss Actor               : -0.0671
+||Loss Critic              : 0.0150
+||Loss Muscle              : 0.0000
+||Noise                    : 0.996
+||Num Transition So far    : 16235
+||Num Transition           : 2020
+||Num Episode              : 88
+||Avg Return per episode   : 2.098
+||Avg Reward per transition: 0.091
+||Avg Step per episode     : 23.0
+||Max Avg Retun So far     : 2.106 at #3
+save simulation nn ../nn/current.pt
+save muscle nn ../nn/current_muscle.pt
+=============================================
+=============================================
+SIM : 2062
+(0, 0)
+Optimizing sim nn : 10/10
+# 9 === 0h:0m:37s ===
+||Loss Actor               : -0.0618
+||Loss Critic              : 0.0094
+||Loss Muscle              : 0.0000
+||Noise                    : 0.995
+||Num Transition So far    : 18297
+||Num Transition           : 2062
+||Num Episode              : 86
+||Avg Return per episode   : 2.186
+||Avg Reward per transition: 0.091
+||Avg Step per episode     : 24.0
+||Max Avg Retun So far     : 2.186 at #9
+save simulation nn ../nn/current.pt
+save muscle nn ../nn/current_muscle.pt
+save simulation nn ../nn/max.pt
+save muscle nn ../nn/max_muscle.pt
+=============================================
+=============================================
+SIM : 2098
+(0, 0)
+Optimizing sim nn : 10/10
+# 10 === 0h:0m:41s ===
+||Loss Actor               : -0.0559
+||Loss Critic              : 0.0162
+||Loss Muscle              : 0.0000
+||Noise                    : 0.994
+||Num Transition So far    : 20395
+||Num Transition           : 2098
+||Num Episode              : 89
+||Avg Return per episode   : 2.251
+||Avg Reward per transition: 0.095
+||Avg Step per episode     : 23.6
+||Max Avg Retun So far     : 2.251 at #10
+save simulation nn ../nn/current.pt
+save muscle nn ../nn/current_muscle.pt
+save simulation nn ../nn/max.pt
+save muscle nn ../nn/max_muscle.pt
+=============================================
+=============================================
+SIM : 2068
+(0, 0)
+Optimizing sim nn : 10/10
+# 11 === 0h:0m:48s ===
+||Loss Actor               : -0.0564
+||Loss Critic              : 0.0187
+||Loss Muscle              : 0.0000
+||Noise                    : 0.994
+||Num Transition So far    : 22463
+||Num Transition           : 2068
+||Num Episode              : 83
+||Avg Return per episode   : 2.221
+||Avg Reward per transition: 0.089
+||Avg Step per episode     : 24.9
+||Max Avg Retun So far     : 2.251 at #10
+save simulation nn ../nn/current.pt
+save muscle nn ../nn/current_muscle.pt
+=============================================
+=============================================
+SIM : 1676
