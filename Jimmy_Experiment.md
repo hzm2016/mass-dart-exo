@@ -69,7 +69,7 @@ make -j8
 ```bash
 cd python
 conda activate exo 
-python3 main.py -d ../data/metadata_mass_wm.txt -a mass -t wm  
+python3 main.py -d ../data/metadata_mass_wm.txt -a mass -t wm -wp mass-with-muscle
 ```
 
 ## Jimmy experiments 
@@ -77,5 +77,6 @@ open another terminal
 ```bash
 cd python
 conda activate exo 
-python3 main.py -d ../data/metadata_mass_wo.txt -a mass -t wo  
+python3 main.py -d ../data/metadata_mass_wo.txt -a mass -t wo -wp mass-with-muscle
+```
 ```

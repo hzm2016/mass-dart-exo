@@ -231,7 +231,7 @@ class PPO(object):
 			states = self.env.GetStates()
 		
 	def OptimizeSimulationNN(self):
-		all_transitions = np.array(self.replay_buffer.buffer)
+		all_transitions = np.array(self.replay_buffer.buffer,dtype=object)  
 		for j in range(self.num_epochs):
 			np.random.shuffle(all_transitions)
 			for i in range(len(all_transitions)//self.batch_size):
@@ -306,8 +306,7 @@ class PPO(object):
 				loss_reg = (activation).pow(2).mean()
 				loss_target = (((tau-stack_tau_des)/100.0).pow(2)).mean()
 
-				loss = 0.01*loss_reg + loss_target
-				# loss = loss_target
+				loss = 0.01*loss_reg + loss_target 
 
 				self.optimizer_muscle.zero_grad()
 				loss.backward(retain_graph=True)
@@ -362,20 +361,19 @@ class PPO(object):
 		self.SaveModel()
   
 		print('=============================================')
-		# wandb.log({
-      	# 	"Loss Actor": self.loss_actor,
-		# 	"Loss Critic": self.loss_critic,
-		# 	"Loss Muscle": self.loss_muscle,
-		# 	"Num Transition So far": self.num_tuple_so_far,
-		# 	"Num Transition": self.num_tuple,
-		# 	"Num Episode": self.num_episode,
-		# 	"Avg Return per episode": self.sum_return/self.num_episode,
-		# 	"Avg Reward per transition": self.sum_return/self.num_tuple,
-		# 	"Avg Step per episode": self.num_tuple/self.num_episode,
-		# 	"Max Avg Retun So far": self.max_return,
-		# 	"Max Avg Return Epoch": self.max_return_epoch}
-		# )
-		
+		wandb.log({
+      		"Loss Actor": self.loss_actor,
+			"Loss Critic": self.loss_critic,
+			"Loss Muscle": self.loss_muscle,
+			"Num Transition So far": self.num_tuple_so_far,
+			"Num Transition": self.num_tuple,
+			"Num Episode": self.num_episode,
+			"Avg Return per episode": self.sum_return/self.num_episode,
+			"Avg Reward per transition": self.sum_return/self.num_tuple,
+			"Avg Step per episode": self.num_tuple/self.num_episode,
+			"Max Avg Retun So far": self.max_return,
+			"Max Avg Return Epoch": self.max_return_epoch}
+		)  
 		print('=============================================')
 		return np.array(self.rewards)
 
@@ -415,9 +413,9 @@ if __name__=="__main__":
 	parser.add_argument('-a','--algorithm',help='mass nature tmech')    
 	parser.add_argument('-t','--type',help='wm: with muscle, wo: without muscle')   
  
-	parser.add_argument('--wandb_project', default='Zhimin_TMech', help='wandb project name')
+	parser.add_argument('-wp', '--wandb_project', default='junxi_training', help='wandb project name')
 	parser.add_argument('--wandb_entity', default='markzhumi1805', help='wandb entity name')
-	parser.add_argument('--wandb_name', default='Test', help='wandb run name')
+	parser.add_argument('wn', '--wandb_name', default='Test', help='wandb run name')
 	parser.add_argument('--wandb_notes', default='', help='wandb notes')
 
 	parser.add_argument('--maxiterations',type=int, default=50000, help='meta file')    
@@ -443,12 +441,9 @@ if __name__=="__main__":
   
 	file_name_reward_path = '../reward/episode_reward_' + args.algorithm + '_' + args.type + '.npy'   
 	
-	# wandb.config = {}
-	# wandb.init(project=args.wandb_project,
-	# 				entity=args.wandb_entity,
-	# 				# group=args.wandb_group,
-	# 				config=wandb.config,
-	# 				name=args.wandb_name) 
+	wandb.init(
+		project=args.wandb_project
+    ) 
  
 	print('num states: {}, num actions: {}'.format(ppo.env.GetNumState(),ppo.env.GetNumAction()))
 	for i in range(ppo.max_iteration-5):

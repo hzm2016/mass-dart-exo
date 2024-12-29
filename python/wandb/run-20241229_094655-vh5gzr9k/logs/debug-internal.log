@@ -1,0 +1,8 @@
+{"time":"2024-12-29T09:46:55.790543753+08:00","level":"INFO","msg":"using version","core version":"0.19.1"}
+{"time":"2024-12-29T09:46:55.790559478+08:00","level":"INFO","msg":"created symlink","path":"/home/harlab/1-ncsu/mass-dart-exo/python/wandb/run-20241229_094655-vh5gzr9k/logs/debug-core.log"}
+{"time":"2024-12-29T09:46:55.894452291+08:00","level":"INFO","msg":"created new stream","id":"vh5gzr9k"}
+{"time":"2024-12-29T09:46:55.894520679+08:00","level":"INFO","msg":"stream: started","id":"vh5gzr9k"}
+{"time":"2024-12-29T09:46:55.894741144+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"vh5gzr9k"}
+{"time":"2024-12-29T09:46:55.894773691+08:00","level":"INFO","msg":"sender: started","stream_id":"vh5gzr9k"}
+{"time":"2024-12-29T09:46:55.894862455+08:00","level":"INFO","msg":"handler: started","stream_id":"vh5gzr9k"}
+{"time":"2024-12-29T09:46:56.702145142+08:00","level":"INFO","msg":"Starting system monitor"}
