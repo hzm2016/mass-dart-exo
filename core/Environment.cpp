@@ -209,7 +209,7 @@ Step()
 			{
 				L_vectorized.segment(i*m, m) = L.row(i);
 			}
-			mCurrentMuscleTuple.L = L_vectorized;
+			mCurrentMuscleTuple.L = L_vectorized; 
 			mCurrentMuscleTuple.b = Jtp.segment(mRootJointDof,n-mRootJointDof);
 			mCurrentMuscleTuple.tau_des = mDesiredTorque.tail(mDesiredTorque.rows()-mRootJointDof);
 			mMuscleTuples.push_back(mCurrentMuscleTuple);
@@ -217,7 +217,7 @@ Step()
 	}
 	else
 	{
-		GetDesiredTorques();
+		GetDesiredTorques();  
 		mCharacter->GetSkeleton()->setForces(mDesiredTorque);
 	}
 
@@ -338,6 +338,7 @@ SetAction(const Eigen::VectorXd& a)
 	mRandomSampleIndex = rand()%(mSimulationHz/mControlHz);
 	mAverageActivationLevels.setZero();
 }
+
 double 
 Environment::
 GetReward()

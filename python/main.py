@@ -60,10 +60,18 @@ class ReplayBuffer(object):
 	def Clear(self):
 		self.buffer.clear()
 class PPO(object):
-	def __init__(self,meta_file, max_iteration=50000, model_path='../nn/'):  
+	def __init__(self,meta_file, max_iteration=10000, 
+              human_model_save_path='../nn/', muscle_model_save_path='../nn/', 
+              human_model_load_path='../nn/', muscle_model_load_path='../nn/', 
+              ):   
 		np.random.seed(seed = int(time.time()))
 
-		self.model_path = model_path 
+		self.human_model_save_path = human_model_save_path 
+		self.muscle_model_save_path = muscle_model_save_path   
+
+		self.human_model_load_path = human_model_load_path 
+		self.muscle_model_load_path = muscle_model_load_path     
+  
 		self.num_slaves = 16
 		self.env = pymss.pymss(meta_file,self.num_slaves)
 		self.use_muscle = self.env.UseMuscle()
@@ -90,9 +98,9 @@ class PPO(object):
 		self.replay_buffer = ReplayBuffer(30000)
 		self.muscle_buffer = {}
 
-		self.model = SimulationNN(self.num_state,self.num_action)
+		self.model = SimulationNN(self.num_state,self.num_action)  
+		self.muscle_model = MuscleNN(self.env.GetNumTotalMuscleRelatedDofs(),self.num_action,self.num_muscles)  
 
-		self.muscle_model = MuscleNN(self.env.GetNumTotalMuscleRelatedDofs(),self.num_action,self.num_muscles)
 		if use_cuda:
 			self.model.cuda()
 			self.muscle_model.cuda()
@@ -122,19 +130,25 @@ class PPO(object):
 		self.env.Resets(True)
 
 	def SaveModel(self,):
-		self.model.save(self.model_path + 'current.pt')
-		self.muscle_model.save(self.model_path + 'current_muscle.pt')
+		self.model.save(self.human_model_save_path + 'current.pt')
+		self.muscle_model.save(self.muscle_model_save_path + 'current_muscle.pt')
 		
 		if self.max_return_epoch == self.num_evaluation:
-			self.model.save(self.model_path + 'max.pt')  
-			self.muscle_model.save(self.model_path + 'max_muscle.pt')
+			self.model.save(self.human_model_save_path + 'max.pt')  
+			self.muscle_model.save(self.muscle_model_save_path + 'max_muscle.pt')
 		if self.num_evaluation%100 == 0:
-			self.model.save(self.model_path+str(self.num_evaluation//100)+'.pt')  
-			self.muscle_model.save(self.model_path+str(self.num_evaluation//100)+'_muscle.pt')
+			self.model.save(self.human_model_save_path+str(self.num_evaluation//100)+'.pt')  
+			self.muscle_model.save(self.muscle_model_save_path+str(self.num_evaluation//100)+'_muscle.pt')
 
-	def LoadModel(self,path):
-		self.model.load('../nn/'+path+'.pt')
-		self.muscle_model.load('../nn/'+path+'_muscle.pt')
+	def LoadModel(self,model_name):  
+		self.model.load(self.human_model_load_path+model_name+'.pt')  
+		self.muscle_model.load(self.muscle_model_load_path+model_name+'_muscle.pt')  
+  
+	def LoadMuscleModel(self,model_name):  
+		self.muscle_model.load(self.muscle_model_load_path+model_name+'_muscle.pt')   
+  
+	def LoadHumanModel(self,model_name):    
+		self.model.load(self.human_model_load_path+model_name+'.pt')    
 
 	def ComputeTDandGAE(self):
 		self.replay_buffer.Clear()
@@ -194,7 +208,8 @@ class PPO(object):
 			# actions = a_dist.loc.cpu().detach().numpy()
 			logprobs = a_dist.log_prob(Tensor(actions)).cpu().detach().numpy().reshape(-1)
 			values = v.cpu().detach().numpy().reshape(-1)
-			self.env.SetActions(actions)
+			self.env.SetActions(actions)  
+   
 			if self.use_muscle:
 				mt = Tensor(self.env.GetMuscleTorques())
 				for i in range(self.num_simulation_per_control//2):
@@ -410,44 +425,62 @@ import argparse
 import os  
 if __name__=="__main__":     
 	parser = argparse.ArgumentParser()     
-	parser.add_argument('-m','--model',help='model path')    
+
+	parser.add_argument('-hms','--human_model_save_path',help='human model save path')    
+	parser.add_argument('-mms','--muscle_model_save_path',help='muscle model save path')   
+
+	parser.add_argument('-hml','--human_model_load_path',help='human model load path')    
+	parser.add_argument('-mml','--muscle_model_load_path',help='muscle model load path')     
+
+	parser.add_argument('-mn','--model_name',help='model name')      
+
 	parser.add_argument('-d','--meta',help='meta file')    
 	parser.add_argument('-a','--algorithm',help='mass nature tmech')    
 	parser.add_argument('-t','--type',help='wm: with muscle, wo: without muscle')   
-	parser.add_argument('-sp','--save_path',default='nn',help='save model path')  
+	parser.add_argument('-sp','--reward_save_path',default='nn',help='save model path')  
 	parser.add_argument('-wp', '--wandb_project', default='junxi_training', help='wandb project name')
 	parser.add_argument('--wandb_entity', default='markzhumi1805', help='wandb entity name')
 	parser.add_argument('-wn', '--wandb_name', default='Test', help='wandb run name')
 	parser.add_argument('-ws', '--wandb_notes', default='', help='wandb notes')
 
-	parser.add_argument('--maxiterations',type=int, default=50000, help='meta file')    
+	parser.add_argument('--maxiterations',type=int, default=10000, help='meta file')      
 
 	args =parser.parse_args()   
 	if args.meta is None:   
 		print('Provide meta file')   
 		exit()  
 
-	nn_dir = '../trained_policy/' + args.save_path + '/'    
-	if not os.path.exists(nn_dir):         
-		os.makedirs(nn_dir)    
+	# nn_dir = '../trained_policy/' + args.human_model_save_path + '/'      
+	# if not os.path.exists(nn_dir):         
+	# 	os.makedirs(nn_dir)    
+ 
+	if not os.path.exists(args.human_model_save_path):           
+		os.makedirs(args.human_model_save_path)      
   
-	ppo = PPO(args.meta, model_path=nn_dir)      
+	# ppo = PPO(args.meta, model_path=nn_dir)   
+	ppo = PPO(
+     	args.meta, max_iteration=10000, 
+		human_model_save_path=args.human_model_save_path, muscle_model_save_path=args.muscle_model_save_path, 
+		human_model_load_path=args.human_model_load_path, muscle_model_load_path=args.muscle_model_load_path, 
+	)   
 
-	reward_dir = '../reward'   
+	reward_dir = '../reward/' + args.reward_save_path  
 	if not os.path.exists(reward_dir):        
-		os.makedirs(reward_dir)    
+		os.makedirs(reward_dir)       
 
-	if args.model is not None:  
-		ppo.LoadModel(args.model)  
+	if args.human_model_load_path is not None and args.type == 'wo':      
+		ppo.LoadHumanModel(args.model_name)    
+	elif args.muscle_model_load_path is not None and args.type == 'wm':   
+		ppo.LoadMuscleModel(args.model_name)    
 	else:  
 		ppo.SaveModel()  
   
-	file_name_reward_path = '../reward/episode_reward_' + args.algorithm + '_' + args.type + '.npy'   
+	file_name_reward_path = reward_dir + '/episode_reward_' + args.algorithm + '_' + args.type + '.npy'   
 	
 	wandb.init(
 		project=args.wandb_project,
 		name=args.wandb_name
-    ) 
+    )   
  
 	print('num states: {}, num actions: {}'.format(ppo.env.GetNumState(),ppo.env.GetNumAction()))
 	for i in range(ppo.max_iteration-5):

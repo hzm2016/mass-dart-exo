@@ -1,4 +1,5 @@
 build/
 *.so
 *.a
-nn/
+trained_policy/
+python/wandb/

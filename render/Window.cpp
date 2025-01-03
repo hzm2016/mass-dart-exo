@@ -135,7 +135,8 @@ Step()
 	if(mNNLoaded)
 		action = GetActionFromNN();
 	else
-		action = Eigen::VectorXd::Zero(mEnv->GetNumAction());
+		action = Eigen::VectorXd::Zero(mEnv->GetNumAction()); 
+	
 	mEnv->SetAction(action);
 
 	if(mEnv->GetUseMuscle())
@@ -174,8 +175,6 @@ SetFocusing()
 		
 	}
 }
-
-
 
 Eigen::VectorXd
 Window::
