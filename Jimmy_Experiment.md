@@ -31,11 +31,16 @@ wandb api key
 
 visualization
 ./render/render ../data/metadata_mass_wm.txt ../trained_policy/nn_wm/current.pt ../trained_policy/nn_wm/current_muscle.pt
-./render/render ../data/metadata_mass_wm.txt ../trained_policy/nn_wm_2/current.pt ../trained_policy/nn_wm_2/current_muscle.pt
+./render/render ../data/metadata_mass_wm.txt ../trained_policy/nn_wm_3/current.pt ../trained_policy/nn_wm_3/current_muscle.pt
 
 ./render/render ../data/metadata_mass_wo.txt ../trained_policy/nn_wo/current.pt ../trained_policy/nn_wo/current_muscle.pt
 
 
 ./render/render ../data/metadata.txt /home/sulab/hipexo/mass-tmech/trained_policy/nn_tmech_wm_2/current_human.pt /home/sulab/hipexo/mass-tmech/trained_policy/nn_tmech_wm_2/current_muscle.pt 
 
+./render/render ../data/metadata_mass_wm.txt /home/sulab/hipexo/mass-tmech/trained_policy/nn_tmech_wm_3/current.pt /home/sulab/hipexo/mass-tmech/trained_policy/nn_tmech_wm_3/current_muscle.pt 
+
+
 ./render/render ../data/metadata_mass_wo.txt /home/sulab/hipexo/mass-dart-exo/trained_policy/nn_wo_run/current.pt
+
+python3 main.py -d ../data/metadata_mass_wm.txt -a mass -t wm -wp mass-with-muscle -wn mass-with-muscle-3 -sp nn_wm_run_3 -hms ../trained_policy/nn_wm_3/ -mms ../trained_policy/nn_wm_3/ -hml trained_policy/nn_wm/ -mml ../trained_policy/nn_wm/ -mn max
