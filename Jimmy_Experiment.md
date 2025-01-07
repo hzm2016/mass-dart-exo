@@ -20,6 +20,8 @@ python3 main.py -d ../data/metadata_mass_wo.txt -a mass -t wo -wp mass-with-musc
 python3 main.py -d ../data/metadata_mass_wm.txt -a mass -t wm -wp mass-with-muscle -wn mass-with-muscle-2 -sp nn_wm_run_2 -hms ../trained_policy/nn_wm_2/ -mms ../trained_policy/nn_wm_2/ -hml trained_policy/nn_wm/ -mml ../trained_policy/nn_wm/ -mn max 
 
 python3 main.py -d ../data/metadata_mass_wo.txt -a mass -t wo -wp mass-with-muscle -wn mass-without-muscle-2 -sp nn_wo_run_2 -hms ../trained_policy/nn_wo_2/ -mms ../trained_policy/nn_wo_2/ -hml ../trained_policy/nn_wo/ -mml ../trained_policy/nn_wo/ -mn max 
+
+python3 main.py -d ../data/metadata_mass_wm.txt -a mass -t wm -wp mass-with-muscle -wn mass-with-muscle-lstm -sp nn_wm_lstm -hms ../trained_policy/nn_wm_lstm/ -mms ../trained_policy/nn_wm_lstm/ -hml None -mml None -mn None  
 ```
 ```
 

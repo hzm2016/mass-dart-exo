@@ -98,7 +98,12 @@ class PPO(object):
 		self.replay_buffer = ReplayBuffer(30000)
 		self.muscle_buffer = {}
 
-		self.model = SimulationNN(self.num_state,self.num_action)  
+		# nn 
+		# self.model = SimulationNN(self.num_state,self.num_action)    
+
+		# lstm 
+		self.model = SimulationLSTMNN(self.num_state,self.num_action)   
+  
 		self.muscle_model = MuscleNN(self.env.GetNumTotalMuscleRelatedDofs(),self.num_action,self.num_muscles)  
 
 		if use_cuda:
@@ -452,7 +457,7 @@ if __name__=="__main__":
 
 	# nn_dir = '../trained_policy/' + args.human_model_save_path + '/'      
 	# if not os.path.exists(nn_dir):         
-	# 	os.makedirs(nn_dir)    
+	# 	os.makedirs(nn_dir)      
  
 	if not os.path.exists(args.human_model_save_path):           
 		os.makedirs(args.human_model_save_path)      
@@ -473,14 +478,14 @@ if __name__=="__main__":
 	elif args.muscle_model_load_path is not None and args.type == 'wm':   
 		ppo.LoadMuscleModel(args.model_name)    
 	else:  
-		ppo.SaveModel()  
+		ppo.SaveModel()    
   
 	file_name_reward_path = reward_dir + '/episode_reward_' + args.algorithm + '_' + args.type + '.npy'   
 	
 	wandb.init(
 		project=args.wandb_project,
 		name=args.wandb_name
-    )   
+    )    
  
 	print('num states: {}, num actions: {}'.format(ppo.env.GetNumState(),ppo.env.GetNumAction()))
 	for i in range(ppo.max_iteration-5):
@@ -489,5 +494,5 @@ if __name__=="__main__":
 
 		# Plot(rewards,'reward',0,False)    
 
-		if i%100 == 0: 
-			np.save(file_name_reward_path, rewards)    
+		if i%100 == 0:  
+			np.save(file_name_reward_path, rewards)     

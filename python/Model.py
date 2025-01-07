@@ -21,13 +21,14 @@ use_cuda = torch.cuda.is_available()
 FloatTensor = torch.cuda.FloatTensor if use_cuda else torch.FloatTensor
 LongTensor = torch.cuda.LongTensor if use_cuda else torch.LongTensor
 ByteTensor = torch.cuda.ByteTensor if use_cuda else torch.ByteTensor
-Tensor = FloatTensor
+Tensor = FloatTensor  
 
-def weights_init(m):
+def weights_init(m):  
 	classname = m.__class__.__name__
 	if classname.find('Linear') != -1:
 		torch.nn.init.xavier_uniform_(m.weight)
 		m.bias.data.zero_()
+
 class MuscleNN(nn.Module):
 	def __init__(self,num_total_muscle_related_dofs,num_dofs,num_muscles):
 		super(MuscleNN,self).__init__()
@@ -93,11 +94,9 @@ class SimulationNN(nn.Module):
 		self.p_fc3 = nn.Linear(num_h2,num_actions)
 		self.log_std = nn.Parameter(torch.zeros(num_actions))
 
-		self.v_fc1 = nn.Linear(num_states,num_h1)
-		self.v_fc2 = nn.Linear(num_h1,num_h2)
-		self.v_fc3 = nn.Linear(num_h2,1)
-
-		# self.reward_container = Container(10000)
+		self.v_fc1 = nn.Linear(num_states,num_h1)   
+		self.v_fc2 = nn.Linear(num_h1,num_h2)  
+		self.v_fc3 = nn.Linear(num_h2,1)  
 
 		torch.nn.init.xavier_uniform_(self.p_fc1.weight)
 		torch.nn.init.xavier_uniform_(self.p_fc2.weight)
@@ -137,10 +136,80 @@ class SimulationNN(nn.Module):
 		
 	def get_action(self,s):
 		ts = torch.tensor(s.astype(np.float32))
-		p,_ = self.forward(ts)
+		p,_ = self.forward(ts)   
 		return p.loc.cpu().detach().numpy().squeeze()
 
 	def get_random_action(self,s):
 		ts = torch.tensor(s.astype(np.float32))
 		p,_ = self.forward(ts)
 		return p.sample().cpu().detach().numpy().squeeze()
+
+
+class SimulationLSTMNN(nn.Module):  
+	def __init__(self, num_states, num_actions):   
+		super(SimulationLSTMNN, self).__init__()   
+
+		num_h1 = 256
+		num_lstm_layers = 2   
+		
+		self.num_actions = num_actions
+		
+		self.p_lstm1 = nn.LSTM(num_states, num_h1, num_lstm_layers, batch_first=True) # for LSTM network
+		self.p_fc3 = nn.Linear(num_h1, num_actions) # for LSTM network, originally was num_h2
+		self.log_std = nn.Parameter(torch.zeros(num_actions))
+
+		self.v_lstm1 = nn.LSTM(num_states, num_h1, num_lstm_layers, batch_first=True) # for LSTM network
+		self.v_fc3 = nn.Linear(num_h1, 1) # for LSTM network, originally was num_h2
+
+		for name, param in self.p_lstm1.named_parameters():  # for LSTM network
+			if 'weight' in name:
+				torch.nn.init.xavier_uniform_(param)
+		torch.nn.init.xavier_uniform_(self.p_fc3.weight)
+
+		self.p_fc3.bias.data.zero_()
+
+		for name, param in self.v_lstm1.named_parameters():  # for LSTM network
+			if 'weight' in name:
+				torch.nn.init.xavier_uniform_(param)
+		torch.nn.init.xavier_uniform_(self.v_fc3.weight)
+
+		self.v_fc3.bias.data.zero_()  
+
+	def forward(self, x):   
+		# LSTM network
+		p_out, _ = self.p_lstm1(x)
+		if p_out.dim() == 2:
+			p_out = p_out.unsqueeze(1)
+		p_out = p_out[:, -1, :]   
+		p_out = F.relu(p_out)   
+		p_out = self.p_fc3(p_out)      
+
+		p_out = MultiVariateNormal(p_out, self.log_std.exp())  
+		
+		# LSTM network
+		v_out, _ = self.v_lstm1(x)
+		if v_out.dim() == 2:
+			v_out = v_out.unsqueeze(1)
+		v_out = v_out[:, -1, :]   
+		v_out = F.relu(v_out)
+		v_out = self.v_fc3(v_out)
+
+		return p_out, v_out
+
+	def load(self, path):
+		print('load simulation nn {}'.format(path))
+		self.load_state_dict(torch.load(path))
+
+	def save(self, path):
+		print('save simulation nn {}'.format(path))  
+		torch.save(self.state_dict(), path) 
+
+	def get_action(self, s):
+		ts = torch.tensor(s)
+		p, _ = self.forward(ts)
+		return p.loc.cpu().detach().numpy().squeeze()   
+
+	def get_random_action(self, s):
+		ts = torch.tensor(s)
+		p, _ = self.forward(ts)  
+		return p.sample().cpu().detach().numpy().squeeze()  
