@@ -2,6 +2,8 @@
 #define __MASS_WINDOW_H__
 #include "dart/dart.hpp"
 #include "dart/gui/gui.hpp"
+#include <iostream> 
+#include <fstream>   
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
 #include <pybind11/numpy.h>
@@ -44,7 +46,6 @@ private:
 	py::scoped_interpreter guard;
 	py::object mm,mns,sys_module,nn_module,muscle_nn_module;
 
-
 	Environment* mEnv;
 	bool mFocus;
 	bool mSimulating;
@@ -52,7 +53,9 @@ private:
 	bool mDrawShadow;
 	bool mNNLoaded;
 	bool mMuscleNNLoaded;
-	Eigen::Affine3d mViewMatrix;
+	Eigen::Affine3d mViewMatrix;  
+
+	std::ofstream outMotion;  
 };
 };
 

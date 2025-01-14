@@ -89,8 +89,8 @@ class PPO(object):
 		self.num_control_Hz = self.env.GetControlHz()
 		self.num_simulation_per_control = self.num_simulation_Hz // self.num_control_Hz
 
-		self.gamma = 0.99
-		self.lb = 0.99
+		self.gamma = 0.99 
+		self.lb = 0.99   
 
 		self.buffer_size = 2048
 		self.batch_size = 128
@@ -99,10 +99,10 @@ class PPO(object):
 		self.muscle_buffer = {}
 
 		# nn 
-		# self.model = SimulationNN(self.num_state,self.num_action)    
+		self.model = SimulationNN(self.num_state,self.num_action)   
 
 		# lstm 
-		self.model = SimulationLSTMNN(self.num_state,self.num_action)   
+		# self.model = SimulationLSTMNN(self.num_state,self.num_action)   
   
 		self.muscle_model = MuscleNN(self.env.GetNumTotalMuscleRelatedDofs(),self.num_action,self.num_muscles)  
 
@@ -344,8 +344,9 @@ class PPO(object):
 	def OptimizeModel(self):
 		self.ComputeTDandGAE()
 		self.OptimizeSimulationNN()
-		if self.use_muscle:
-			self.OptimizeMuscleNN()
+		if self.use_muscle: 
+			pass 
+			# self.OptimizeMuscleNN()
 		
 	def Train(self):
 		self.GenerateTransitions()

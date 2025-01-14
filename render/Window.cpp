@@ -10,6 +10,7 @@ using namespace dart::dynamics;
 using namespace dart::simulation;
 using namespace dart::gui;
 
+
 Window::
 Window(Environment* env)
 	:mEnv(env),mFocus(true),mSimulating(false),mDrawOBJ(false),mDrawShadow(true),mMuscleNNLoaded(false)
@@ -25,7 +26,9 @@ Window(Environment* env)
 
 	mm = py::module::import("__main__");
 	mns = mm.attr("__dict__");
-	sys_module = py::module::import("sys");
+	sys_module = py::module::import("sys");  
+
+	outMotion.open("outMotion.txt", std::ios::app);  
 	
 	py::str module_dir = (std::string(MASS_ROOT_DIR)+"/python").c_str();
 	sys_module.attr("path").attr("insert")(1, module_dir);
@@ -131,9 +134,9 @@ Window::
 Step()
 {	
 	int num = mEnv->GetSimulationHz()/mEnv->GetControlHz();
-	Eigen::VectorXd action;
+	Eigen::VectorXd action;  
 	if(mNNLoaded)
-		action = GetActionFromNN();
+		action = GetActionFromNN(); 
 	else
 		action = Eigen::VectorXd::Zero(mEnv->GetNumAction()); 
 	
@@ -141,26 +144,38 @@ Step()
 
 	if(mEnv->GetUseMuscle())
 	{
-		int inference_per_sim = 2;
+		int inference_per_sim = 1; 
+		Eigen::VectorXd muscle_activation; 
 		for(int i=0;i<num;i+=inference_per_sim){
-			Eigen::VectorXd mt = mEnv->GetMuscleTorques();
-			mEnv->SetActivationLevels(GetActivationFromNN(mt));
+			Eigen::VectorXd mt = mEnv->GetMuscleTorques();  
+			muscle_activation = GetActivationFromNN(mt);  
+			mEnv->SetActivationLevels(muscle_activation); 
 			for(int j=0;j<inference_per_sim;j++)
-				mEnv->Step();
+				mEnv->Step();   
 		}	
+
+		std::cout << "Left Hip Position :" << mEnv->GetCharacter()->GetSkeleton()->getPositions()[6] << std::endl;  
+		std::cout << "Right Hip Position :" << mEnv->GetCharacter()->GetSkeleton()->getPositions()[15] << std::endl;  
+		std::cout << "Muscle effect :" << muscle_activation.norm() << std::endl; 
+		outMotion << mEnv->GetCharacter()->GetSkeleton()->getPositions()[15] << "," << mEnv->GetCharacter()->GetSkeleton()->getPositions()[6] << ","<< mEnv->GetCharacter()->GetSkeleton()->getVelocities()[15] << "," << mEnv->GetCharacter()->GetSkeleton()->getVelocities()[6] << "," <<  mEnv->GetDesiredTorques()[15] << "," <<  mEnv->GetDesiredTorques()[6] << "," << muscle_activation.norm() << std::endl;    
+
+		// std::cout << "Left Hip :" << mEnv->GetDesiredTorques()[15] << std::endl;      
+		// std::cout << "Right Hip :" << mEnv->GetDesiredTorques()[6] << std::endl;      
+		// std::cout << "Left Hip Velocity :" << mEnv->GetCharacter()->GetSkeleton()->getVelocities()[6] << std::endl;  
+		// std::cout << "Right Hip Velocity :" << mEnv->GetCharacter()->GetSkeleton()->getVelocities()[15] << std::endl;   
 	}
+
 	else
 	{
-		for(int i=0;i<num;i++)
+		for(int i=0;i<num;i++)  
 			mEnv->Step();	
 	}
-	
 }
 void
 Window::
 Reset()
 {
-	mEnv->Reset();
+	mEnv->Reset();  
 }
 void
 Window::
@@ -189,10 +204,13 @@ GetActivationFromNN(const Eigen::VectorXd& mt)
 {
 	if(!mMuscleNNLoaded)
 	{
-		mEnv->GetDesiredTorques();
+		mEnv->GetDesiredTorques(); 
 		return Eigen::VectorXd::Zero(mEnv->GetCharacter()->GetMuscles().size());
 	}
 	py::object get_activation = muscle_nn_module.attr("get_activation");
+
+	// std::cout << "Left Hip :" << mEnv->GetDesiredTorques()[15] << std::endl;     
+	// std::cout << "Right Hip :" << mEnv->GetDesiredTorques()[6] << std::endl;      
 
 	return muscle_nn_module.attr("get_activation")(mt, mEnv->GetDesiredTorques()).cast<Eigen::VectorXd>();
 }

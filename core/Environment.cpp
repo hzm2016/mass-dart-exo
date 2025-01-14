@@ -36,9 +36,9 @@ Initialize(const std::string& meta_file,bool load_obj)
 		index.clear();
 		ss.clear();
 
-		std::getline(ifs,str);
-		ss.str(str);
-		ss>>index;
+		std::getline(ifs,str);  
+		ss.str(str);  
+		ss>>index;   
 		if(!index.compare("use_muscle"))
 		{	
 			std::string str2;
@@ -87,14 +87,10 @@ Initialize(const std::string& meta_file,bool load_obj)
 		else if(!index.compare("reward_param")){
 			double a,b,c,d;
 			ss>>a>>b>>c>>d;
-			this->SetRewardParameters(a,b,c,d);
-
-		}
-
-
+			this->SetRewardParameters(a,b,c,d);  
+		}  
 	}
 	ifs.close();
-	
 	
 	double kp = 300.0;
 	character->SetPDParameters(kp,sqrt(2*kp));
@@ -161,12 +157,18 @@ Reset(bool RSI)
 	mAction.setZero();
 
 	std::pair<Eigen::VectorXd,Eigen::VectorXd> pv = mCharacter->GetTargetPosAndVel(t,1.0/mControlHz);
-	mTargetPositions = pv.first;
-	mTargetVelocities = pv.second;
+	mTargetPositions = pv.first; 
+	mTargetVelocities = pv.second; 
 
-	mCharacter->GetSkeleton()->setPositions(mTargetPositions);
-	mCharacter->GetSkeleton()->setVelocities(mTargetVelocities);
-	mCharacter->GetSkeleton()->computeForwardKinematics(true,false,false);
+	// mTargetPositions[6] = 0.34; 
+	
+	mCharacter->GetSkeleton()->setPositions(mTargetPositions); 
+	mCharacter->GetSkeleton()->setVelocities(mTargetVelocities); 
+	mCharacter->GetSkeleton()->computeForwardKinematics(true,false,false); 
+
+	// Left and right hip joints // 
+	std::cout << "Right Hip Position :" << mCharacter->GetSkeleton()->getPositions()[6] << std::endl;  
+	std::cout << "Left Hip Position :" << mCharacter->GetSkeleton()->getPositions()[15] << std::endl;  
 }
 void
 Environment::

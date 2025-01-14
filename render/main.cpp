@@ -4,8 +4,13 @@
 #include "Character.h"
 #include "BVH.h"
 #include "Muscle.h"
+#include "iostream" 
+#include "fstream"  
 int main(int argc,char** argv)
 {
+	// create file 
+	std::ofstream save_file("motion.txt");    
+
 	MASS::Environment* env = new MASS::Environment();
 
 	if(argc==1)
@@ -13,7 +18,16 @@ int main(int argc,char** argv)
 		std::cout<<"Provide Metadata.txt"<<std::endl;
 		return 0;
 	}
-	env->Initialize(std::string(argv[1]),true);
+
+	env->Initialize(std::string(argv[1]),true);   
+
+	////////////////////////////////////////////////////
+	// std::cout << "The human dofs are :" << std::endl;   
+	// for(int i=0; i < env->GetCharacter()->GetSkeleton()->getNumDofs(); i++)
+	// {
+	// 	std::cout << "DOF :" << i << ":" << env->GetCharacter()->GetSkeleton()->getDof(i)->getName() << std::endl; 
+	// }
+
 	// if(argc==3)
 	// 	env->SetUseMuscle(true);
 	// else
@@ -34,9 +48,9 @@ int main(int argc,char** argv)
 
 	// env->Initialize();
 
-	glutInit(&argc, argv);
+	glutInit(&argc, argv);   
 
-	MASS::Window* window;
+	MASS::Window* window;    
 	if(argc == 2)
 	{
 		window = new MASS::Window(env);
@@ -60,14 +74,15 @@ int main(int argc,char** argv)
 			}
 			window = new MASS::Window(env,argv[2]);
 		}
-	}
-	// if(argc==1)
-	// 	window = new MASS::Window(env);
+	}   
+
+	// if(argc==1)  
+	// 	window = new MASS::Window(env); 
 	// else if (argc==2)
-	// 	window = new MASS::Window(env,argv[1]);
+	// 	window = new MASS::Window(env,argv[1]);  
 	// else if (argc==3)
-	// 	window = new MASS::Window(env,argv[1],argv[2]);
+	// 	window = new MASS::Window(env,argv[1],argv[2]);   
 	
 	window->initWindow(1920,1080,"gui");
 	glutMainLoop();
-}
+}   
