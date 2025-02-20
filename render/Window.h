@@ -55,7 +55,8 @@ private:
 	bool mMuscleNNLoaded;
 	Eigen::Affine3d mViewMatrix;  
 
-	std::ofstream outMotion;  
+	std::ofstream outMotion; 
+	std::ofstream outMuscle;      
 };
 };
 

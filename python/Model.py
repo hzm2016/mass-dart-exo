@@ -81,7 +81,8 @@ class MuscleNN(nn.Module):
 	def get_activation(self,muscle_tau,tau):
 		act = self.forward(Tensor(muscle_tau.reshape(1,-1).astype(np.float32)),Tensor(tau.reshape(1,-1).astype(np.float32)))
 		return act.cpu().detach().numpy().squeeze()
-		
+
+	
 class SimulationNN(nn.Module):
 	def __init__(self,num_states,num_actions):
 		super(SimulationNN,self).__init__()

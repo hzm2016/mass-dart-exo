@@ -26,8 +26,8 @@ FloatTensor = torch.cuda.FloatTensor if use_cuda else torch.FloatTensor
 LongTensor = torch.cuda.LongTensor if use_cuda else torch.LongTensor
 ByteTensor = torch.cuda.ByteTensor if use_cuda else torch.ByteTensor
 Tensor = FloatTensor
-Episode = namedtuple('Episode',('s','a','r', 'value', 'logprob'))
-class EpisodeBuffer(object):
+Episode = namedtuple('Episode',('s','a','r', 'value', 'logprob')) 
+class EpisodeBuffer(object): 
 	def __init__(self):
 		self.data = []
 
@@ -36,7 +36,7 @@ class EpisodeBuffer(object):
 	def Pop(self):
 		self.data.pop()
 	def GetData(self):
-		return self.data
+		return self.data  
 MuscleTransition = namedtuple('MuscleTransition',('JtA','tau_des','L','b'))
 class MuscleBuffer(object):
 	def __init__(self, buff_size = 10000):
@@ -89,11 +89,11 @@ class PPO(object):
 		self.num_control_Hz = self.env.GetControlHz()
 		self.num_simulation_per_control = self.num_simulation_Hz // self.num_control_Hz
 
-		self.gamma = 0.99 
+		self.gamma = 0.99   
 		self.lb = 0.99   
 
-		self.buffer_size = 2048
-		self.batch_size = 128
+		self.buffer_size = 2048   
+		self.batch_size = 128   
 		self.muscle_batch_size = 128
 		self.replay_buffer = ReplayBuffer(30000)
 		self.muscle_buffer = {}
@@ -140,7 +140,8 @@ class PPO(object):
 		
 		if self.max_return_epoch == self.num_evaluation:
 			self.model.save(self.human_model_save_path + 'max.pt')  
-			self.muscle_model.save(self.muscle_model_save_path + 'max_muscle.pt')
+			self.muscle_model.save(self.muscle_model_save_path + 'max_muscle.pt') 
+		
 		if self.num_evaluation%100 == 0:
 			self.model.save(self.human_model_save_path+str(self.num_evaluation//100)+'.pt')  
 			self.muscle_model.save(self.muscle_model_save_path+str(self.num_evaluation//100)+'_muscle.pt')
@@ -474,12 +475,14 @@ if __name__=="__main__":
 	if not os.path.exists(reward_dir):        
 		os.makedirs(reward_dir)       
 
-	if args.human_model_load_path is not None and args.type == 'wo':      
-		ppo.LoadHumanModel(args.model_name)    
-	elif args.muscle_model_load_path is not None and args.type == 'wm':   
-		ppo.LoadMuscleModel(args.model_name)    
-	else:  
-		ppo.SaveModel()    
+	# if args.human_model_load_path is not None and args.type == 'wo':      
+	# 	ppo.LoadHumanModel(args.model_name)    
+	# elif args.muscle_model_load_path is not None and args.type == 'wm':   
+	# 	ppo.LoadMuscleModel(args.model_name)    
+	# else:  
+	# 	ppo.SaveModel()    
+
+	ppo.SaveModel()   
   
 	file_name_reward_path = reward_dir + '/episode_reward_' + args.algorithm + '_' + args.type + '.npy'   
 	

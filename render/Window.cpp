@@ -3,7 +3,8 @@
 #include "Character.h"
 #include "BVH.h"
 #include "Muscle.h"
-#include <iostream>
+#include <iostream> 
+#include <ctime>  
 using namespace MASS;
 using namespace dart;
 using namespace dart::dynamics;
@@ -15,30 +16,40 @@ Window::
 Window(Environment* env)
 	:mEnv(env),mFocus(true),mSimulating(false),mDrawOBJ(false),mDrawShadow(true),mMuscleNNLoaded(false)
 {
-	mBackground[0] = 1.0;
-	mBackground[1] = 1.0;
-	mBackground[2] = 1.0;
-	mBackground[3] = 1.0;
-	SetFocusing();
+	mBackground[0] = 1.0;  
+	mBackground[1] = 1.0;  
+	mBackground[2] = 1.0;  
+	mBackground[3] = 1.0;  
+	SetFocusing();  
 	mZoom = 0.25;	
-	mFocus = false;
-	mNNLoaded = false;
+	mFocus = false;  
+	mNNLoaded = false;  
 
-	mm = py::module::import("__main__");
-	mns = mm.attr("__dict__");
-	sys_module = py::module::import("sys");  
+	mm = py::module::import("__main__");  
+	mns = mm.attr("__dict__");  
+	sys_module = py::module::import("sys");     
 
-	outMotion.open("outMotion.txt", std::ios::app);  
+	// outMotion.open("outMotion.txt", std::ios::app);  
+	// outMuscle.open("outMuscle.txt", std::ios::app);    
+
+	// outMotion.open("outMotion_10.txt", std::ios::app);  
+	// outMuscle.open("outMuscle_10.txt", std::ios::app);   
+
+	outMotion.open("outMotion_30.txt", std::ios::app);    
+	outMuscle.open("outMuscle_30.txt", std::ios::app);      
+
+	// outMotion.open("outMotion_3.txt", std::ios::app);    
+	// outMuscle.open("outMuscle_3.txt", std::ios::app);     
 	
 	py::str module_dir = (std::string(MASS_ROOT_DIR)+"/python").c_str();
 	sys_module.attr("path").attr("insert")(1, module_dir);
 	py::exec("import torch",mns);
 	py::exec("import torch.nn as nn",mns);
-	py::exec("import torch.optim as optim",mns);
-	py::exec("import torch.nn.functional as F",mns);
-	py::exec("import torchvision.transforms as T",mns);
-	py::exec("import numpy as np",mns);
-	py::exec("from Model import *",mns);
+	py::exec("import torch.optim as optim",mns); 
+	py::exec("import torch.nn.functional as F",mns); 
+	py::exec("import torchvision.transforms as T",mns);  
+	py::exec("import numpy as np",mns);  
+	py::exec("from Model import *",mns);  
 }
 Window::
 Window(Environment* env,const std::string& nn_path)
@@ -133,44 +144,62 @@ void
 Window::
 Step()
 {	
-	int num = mEnv->GetSimulationHz()/mEnv->GetControlHz();
+	std::time_t start = std::time(nullptr);   // Start time
+	auto start_tp = std::chrono::system_clock::now();  
+	double start_second = std::chrono::duration<double>(start_tp.time_since_epoch()).count();  
+
+	int num = mEnv->GetSimulationHz()/mEnv->GetControlHz(); 
+
+	/// load action ///   
 	Eigen::VectorXd action;  
-	if(mNNLoaded)
+	if(mNNLoaded) 
 		action = GetActionFromNN(); 
 	else
 		action = Eigen::VectorXd::Zero(mEnv->GetNumAction()); 
 	
-	mEnv->SetAction(action);
+	mEnv->SetAction(action);  
 
-	if(mEnv->GetUseMuscle())
+	if(mEnv->GetUseMuscle())  
 	{
-		int inference_per_sim = 1; 
-		Eigen::VectorXd muscle_activation; 
-		for(int i=0;i<num;i+=inference_per_sim){
-			Eigen::VectorXd mt = mEnv->GetMuscleTorques();  
-			muscle_activation = GetActivationFromNN(mt);  
-			mEnv->SetActivationLevels(muscle_activation); 
-			for(int j=0;j<inference_per_sim;j++)
+		int inference_per_sim = 1;  
+
+		Eigen::VectorXd muscle_activation;  
+		
+		for(int i=0; i<num; i+=inference_per_sim)
+		{
+			Eigen::VectorXd mt = mEnv->GetMuscleTorques();   
+			muscle_activation = GetActivationFromNN(mt);   
+			mEnv->SetActivationLevels(muscle_activation);   
+			for(int j=0;j<inference_per_sim;j++)  
+			{
 				mEnv->Step();   
+			}
 		}	
 
 		std::cout << "Left Hip Position :" << mEnv->GetCharacter()->GetSkeleton()->getPositions()[6] << std::endl;  
 		std::cout << "Right Hip Position :" << mEnv->GetCharacter()->GetSkeleton()->getPositions()[15] << std::endl;  
-		std::cout << "Muscle effect :" << muscle_activation.norm() << std::endl; 
-		outMotion << mEnv->GetCharacter()->GetSkeleton()->getPositions()[15] << "," << mEnv->GetCharacter()->GetSkeleton()->getPositions()[6] << ","<< mEnv->GetCharacter()->GetSkeleton()->getVelocities()[15] << "," << mEnv->GetCharacter()->GetSkeleton()->getVelocities()[6] << "," <<  mEnv->GetDesiredTorques()[15] << "," <<  mEnv->GetDesiredTorques()[6] << "," << muscle_activation.norm() << std::endl;    
-
+		std::cout << "Muscle effect :" << muscle_activation.norm() << "," << muscle_activation.size() << std::endl;  
+		outMotion << start_second << "," << mEnv->GetCharacter()->GetSkeleton()->getPositions()[15] << "," << mEnv->GetCharacter()->GetSkeleton()->getPositions()[6] << ","<< mEnv->GetCharacter()->GetSkeleton()->getVelocities()[15] << "," << mEnv->GetCharacter()->GetSkeleton()->getVelocities()[6] << "," <<  mEnv->ReturnDesiredTorques()[15] << "," <<  mEnv->ReturnDesiredTorques()[6] << "," << muscle_activation.norm() << std::endl;    
+		outMuscle << start_second << "," << muscle_activation[92] << "," << muscle_activation[102] << "," <<  muscle_activation[110] << "," << muscle_activation[208] << "," << muscle_activation[236] << "," << muscle_activation[238] << "," << muscle_activation[93] << "," << muscle_activation[103] << "," << muscle_activation[111] << "," << muscle_activation[209] << "," << muscle_activation[237] << "," << muscle_activation[239] << std::endl;  
+		
 		// std::cout << "Left Hip :" << mEnv->GetDesiredTorques()[15] << std::endl;      
 		// std::cout << "Right Hip :" << mEnv->GetDesiredTorques()[6] << std::endl;      
 		// std::cout << "Left Hip Velocity :" << mEnv->GetCharacter()->GetSkeleton()->getVelocities()[6] << std::endl;  
 		// std::cout << "Right Hip Velocity :" << mEnv->GetCharacter()->GetSkeleton()->getVelocities()[15] << std::endl;   
 	}
-
 	else
 	{
 		for(int i=0;i<num;i++)  
 			mEnv->Step();	
-	}
+	}    
+
+    std::time_t end = std::time(nullptr);      // End time 
+	auto end_tp = std::chrono::system_clock::now();   
+	double end_second = std::chrono::duration<double>(end_tp.time_since_epoch()).count();   
+
+	std::cout << "step time :" << end_second - start_second << std::endl;   
 }
+
 void
 Window::
 Reset()

@@ -184,8 +184,8 @@ void
 EnvManager::
 SetActivationLevels(const Eigen::MatrixXd& activations)
 {
-	for (int id = 0; id < mNumEnvs; ++id)
-		mEnvs[id]->SetActivationLevels(activations.row(id));
+	for (int id = 0; id < mNumEnvs; ++id)  
+		mEnvs[id]->SetActivationLevels(activations.row(id));  
 }
 
 void

@@ -6,18 +6,24 @@
 #include "Muscle.h"
 #include "iostream" 
 #include "fstream"  
+
+
+
 int main(int argc,char** argv)
 {
-	// create file 
-	std::ofstream save_file("motion.txt");    
+	// // create file 
+	// std::ofstream save_file("outMotion.txt");   
 
-	MASS::Environment* env = new MASS::Environment();
+	// // create file for muscle activation
+	// std::ofstream save_file("outMuscle.txt");       
+
+	MASS::Environment* env = new MASS::Environment();  
 
 	if(argc==1)
 	{
-		std::cout<<"Provide Metadata.txt"<<std::endl;
-		return 0;
-	}
+		std::cout<<"Provide Metadata.txt"<<std::endl;  
+		return 0;  
+	}   
 
 	env->Initialize(std::string(argv[1]),true);   
 
@@ -84,5 +90,5 @@ int main(int argc,char** argv)
 	// 	window = new MASS::Window(env,argv[1],argv[2]);   
 	
 	window->initWindow(1920,1080,"gui");
-	glutMainLoop();
+	glutMainLoop();  
 }   

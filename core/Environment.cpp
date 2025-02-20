@@ -127,12 +127,12 @@ Initialize()
 		mCurrentMuscleTuple.tau_des = Eigen::VectorXd::Zero(mNumActiveDof);
 		mActivationLevels = Eigen::VectorXd::Zero(mCharacter->GetMuscles().size());
 	}
-	mWorld->setGravity(Eigen::Vector3d(0,-9.8,0.0));
-	mWorld->setTimeStep(1.0/mSimulationHz);
+	mWorld->setGravity(Eigen::Vector3d(0,-9.8,0.0)); 
+	mWorld->setTimeStep(1.0/mSimulationHz);  
 	mWorld->getConstraintSolver()->setCollisionDetector(dart::collision::BulletCollisionDetector::create());
-	mWorld->addSkeleton(mCharacter->GetSkeleton());
-	mWorld->addSkeleton(mGround);
-	mAction = Eigen::VectorXd::Zero(mNumActiveDof);
+	mWorld->addSkeleton(mCharacter->GetSkeleton());  
+	mWorld->addSkeleton(mGround);  
+	mAction = Eigen::VectorXd::Zero(mNumActiveDof);  
 	
 	Reset(false);
 	mNumState = GetState().rows();
@@ -183,6 +183,7 @@ Step()
 			muscle->Update();
 			muscle->ApplyForceToBody();
 		}
+
 		if(mSimCount == mRandomSampleIndex)
 		{
 			auto& skel = mCharacter->GetSkeleton();
@@ -214,7 +215,7 @@ Step()
 			mCurrentMuscleTuple.L = L_vectorized; 
 			mCurrentMuscleTuple.b = Jtp.segment(mRootJointDof,n-mRootJointDof);
 			mCurrentMuscleTuple.tau_des = mDesiredTorque.tail(mDesiredTorque.rows()-mRootJointDof);
-			mMuscleTuples.push_back(mCurrentMuscleTuple);
+			mMuscleTuples.push_back(mCurrentMuscleTuple);  
 		}
 	}
 	else
@@ -243,7 +244,7 @@ GetDesiredTorques()
 	p_des.tail(mTargetPositions.rows()-mRootJointDof) += mAction;
 	mDesiredTorque = mCharacter->GetSPDForces(p_des);
 	return mDesiredTorque.tail(mDesiredTorque.rows()-mRootJointDof);
-}
+}  
 Eigen::VectorXd
 Environment::
 GetMuscleTorques()
@@ -328,17 +329,17 @@ void
 Environment::
 SetAction(const Eigen::VectorXd& a)
 {
-	mAction = a*0.1;
+	mAction = a*0.1;  
 
-	double t = mWorld->getTime();
+	double t = mWorld->getTime();  
 
 	std::pair<Eigen::VectorXd,Eigen::VectorXd> pv = mCharacter->GetTargetPosAndVel(t,1.0/mControlHz);
-	mTargetPositions = pv.first;
-	mTargetVelocities = pv.second;
+	mTargetPositions = pv.first;  
+	mTargetVelocities = pv.second;  
 
-	mSimCount = 0;
-	mRandomSampleIndex = rand()%(mSimulationHz/mControlHz);
-	mAverageActivationLevels.setZero();
+	mSimCount = 0;  
+	mRandomSampleIndex = rand()%(mSimulationHz/mControlHz);  
+	mAverageActivationLevels.setZero();  
 }
 
 double 
@@ -347,8 +348,8 @@ GetReward()
 {
 	auto& skel = mCharacter->GetSkeleton();
 
-	Eigen::VectorXd cur_pos = skel->getPositions();
-	Eigen::VectorXd cur_vel = skel->getVelocities();
+	Eigen::VectorXd cur_pos = skel->getPositions();  
+	Eigen::VectorXd cur_vel = skel->getVelocities();  
 
 	Eigen::VectorXd p_diff_all = skel->getPositionDifferences(mTargetPositions,cur_pos);
 	Eigen::VectorXd v_diff_all = skel->getPositionDifferences(mTargetVelocities,cur_vel);
