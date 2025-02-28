@@ -35,8 +35,8 @@ Window(Environment* env)
 	// outMotion.open("outMotion_10.txt", std::ios::app);  
 	// outMuscle.open("outMuscle_10.txt", std::ios::app);   
 
-	outMotion.open("outMotion_30.txt", std::ios::app);    
-	outMuscle.open("outMuscle_30.txt", std::ios::app);      
+	outMotion.open("outMotion_4_more.txt", std::ios::app);    
+	outMuscle.open("outMuscle_4_more.txt", std::ios::app);      
 
 	// outMotion.open("outMotion_3.txt", std::ios::app);    
 	// outMuscle.open("outMuscle_3.txt", std::ios::app);     
@@ -62,6 +62,9 @@ Window(Environment* env,const std::string& nn_path)
 	str = ("num_action = "+std::to_string(mEnv->GetNumAction())).c_str();
 	py::exec(str,mns);
 
+	std::cout << "num_state  :" << mEnv->GetNumState() << std::endl; 
+	std::cout << "num_action :" << mEnv->GetNumAction() << std::endl; 
+	
 	nn_module = py::eval("SimulationNN(num_state,num_action)",mns);
 
 	py::object load = nn_module.attr("load");
@@ -180,8 +183,9 @@ Step()
 		std::cout << "Right Hip Position :" << mEnv->GetCharacter()->GetSkeleton()->getPositions()[15] << std::endl;  
 		std::cout << "Muscle effect :" << muscle_activation.norm() << "," << muscle_activation.size() << std::endl;  
 		outMotion << start_second << "," << mEnv->GetCharacter()->GetSkeleton()->getPositions()[15] << "," << mEnv->GetCharacter()->GetSkeleton()->getPositions()[6] << ","<< mEnv->GetCharacter()->GetSkeleton()->getVelocities()[15] << "," << mEnv->GetCharacter()->GetSkeleton()->getVelocities()[6] << "," <<  mEnv->ReturnDesiredTorques()[15] << "," <<  mEnv->ReturnDesiredTorques()[6] << "," << muscle_activation.norm() << std::endl;    
-		outMuscle << start_second << "," << muscle_activation[92] << "," << muscle_activation[102] << "," <<  muscle_activation[110] << "," << muscle_activation[208] << "," << muscle_activation[236] << "," << muscle_activation[238] << "," << muscle_activation[93] << "," << muscle_activation[103] << "," << muscle_activation[111] << "," << muscle_activation[209] << "," << muscle_activation[237] << "," << muscle_activation[239] << std::endl;  
-		
+		outMuscle << start_second << "," << muscle_activation[26] << "," << muscle_activation[28] << "," <<  muscle_activation[92] << "," << muscle_activation[102] << "," << muscle_activation[110] << "," << muscle_activation[144] << "," << muscle_activation[182] << "," << muscle_activation[238] << "," << muscle_activation[27] << "," << muscle_activation[29] << "," << muscle_activation[93] << "," << muscle_activation[103] << "," << muscle_activation[111] << "," << muscle_activation[145] << "," << muscle_activation[183] << "," << muscle_activation[239] << std::endl;  
+		// 26, 28, 92, 102, 110, 144, 182, 238 
+		// 27, 29, 93, 103, 111, 145, 183, 239
 		// std::cout << "Left Hip :" << mEnv->GetDesiredTorques()[15] << std::endl;      
 		// std::cout << "Right Hip :" << mEnv->GetDesiredTorques()[6] << std::endl;      
 		// std::cout << "Left Hip Velocity :" << mEnv->GetCharacter()->GetSkeleton()->getVelocities()[6] << std::endl;  
@@ -193,9 +197,9 @@ Step()
 			mEnv->Step();	
 	}    
 
-    std::time_t end = std::time(nullptr);      // End time 
+    std::time_t end = std::time(nullptr);      // End time  
 	auto end_tp = std::chrono::system_clock::now();   
-	double end_second = std::chrono::duration<double>(end_tp.time_since_epoch()).count();   
+	double end_second = std::chrono::duration<double>(end_tp.time_since_epoch()).count();    
 
 	std::cout << "step time :" << end_second - start_second << std::endl;   
 }

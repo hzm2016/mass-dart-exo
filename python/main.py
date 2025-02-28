@@ -106,9 +106,9 @@ class PPO(object):
   
 		self.muscle_model = MuscleNN(self.env.GetNumTotalMuscleRelatedDofs(),self.num_action,self.num_muscles)  
 
-		if use_cuda:
-			self.model.cuda()
-			self.muscle_model.cuda()
+		if use_cuda:  
+			self.model.cuda()  
+			self.muscle_model.cuda()   
 
 		self.default_learning_rate = 1E-4
 		self.default_clip_ratio = 0.2

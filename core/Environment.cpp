@@ -171,6 +171,7 @@ Reset(bool RSI)
 	std::cout << "Left Hip Position :" << mCharacter->GetSkeleton()->getPositions()[15] << std::endl;  
 }
 void
+
 Environment::
 Step()
 {	
@@ -224,7 +225,7 @@ Step()
 		mCharacter->GetSkeleton()->setForces(mDesiredTorque);
 	}
 
-	mWorld->step();
+	mWorld->step();   
 	// Eigen::VectorXd p_des = mTargetPositions;
 	// //p_des.tail(mAction.rows()) += mAction;
 	// mCharacter->GetSkeleton()->setPositions(p_des);
@@ -232,7 +233,7 @@ Step()
 	// mCharacter->GetSkeleton()->computeForwardKinematics(true,false,false);
 	// mWorld->setTime(mWorld->getTime()+mWorld->getTimeStep());
 
-	mSimCount++;
+	mSimCount++;  
 }
 
 
@@ -243,8 +244,9 @@ GetDesiredTorques()
 	Eigen::VectorXd p_des = mTargetPositions;
 	p_des.tail(mTargetPositions.rows()-mRootJointDof) += mAction;
 	mDesiredTorque = mCharacter->GetSPDForces(p_des);
-	return mDesiredTorque.tail(mDesiredTorque.rows()-mRootJointDof);
-}  
+	return mDesiredTorque.tail(mDesiredTorque.rows()-mRootJointDof);  
+}   
+
 Eigen::VectorXd
 Environment::
 GetMuscleTorques()
@@ -273,7 +275,6 @@ double exp_of_squared(double val,double w)
 {
 	return exp(-w*val*val);
 }
-
 
 bool
 Environment::
@@ -324,10 +325,10 @@ GetState()
 
 	state<<p,v,phi;
 	return state;
-}
-void 
-Environment::
-SetAction(const Eigen::VectorXd& a)
+}   
+void   
+Environment::  
+SetAction(const Eigen::VectorXd& a)   
 {
 	mAction = a*0.1;  
 

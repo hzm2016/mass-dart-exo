@@ -42,8 +42,8 @@ visualization
 ./render/render ../data/metadata_mass_wm.txt ../trained_policy/nn_wm/current.pt ../trained_policy/nn_wm/current_muscle.pt
 ./render/render ../data/metadata_mass_wm.txt ../trained_policy/nn_wm_3/current.pt ../trained_policy/nn_wm_3/current_muscle.pt
 
-./render/render ../data/metadata_mass_wo.txt ../trained_policy/nn_wo/current.pt ../trained_policy/nn_wo/current_muscle.pt
-
+./render/render ../data/metadata_mass_wo.txt ../trained_policy/nn_wo/current.pt 
+./render/render ../data/metadata_mass_wo.txt /home/sulab/hipexo/mass-tmech/trained_policy/nn_tmech_wo_30_600/current_human.pt
 
 ./render/render ../data/metadata.txt /home/sulab/hipexo/mass-tmech/trained_policy/nn_tmech_wm_2/current_human.pt /home/sulab/hipexo/mass-tmech/trained_policy/nn_tmech_wm_2/current_muscle.pt 
 
