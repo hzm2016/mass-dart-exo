@@ -206,12 +206,12 @@ Step()
 				Jtp += Jt*Ap.second;
 			}
 
-			mCurrentMuscleTuple.JtA = GetMuscleTorques();
+			mCurrentMuscleTuple.JtA = GetMuscleTorques();  
 			Eigen::MatrixXd L = JtA.block(mRootJointDof,0,n-mRootJointDof,m);
 			Eigen::VectorXd L_vectorized = Eigen::VectorXd((n-mRootJointDof)*m);
 			for(int i=0;i<n-mRootJointDof;i++)
 			{
-				L_vectorized.segment(i*m, m) = L.row(i);
+				L_vectorized.segment(i*m, m) = L.row(i); 
 			}
 			mCurrentMuscleTuple.L = L_vectorized; 
 			mCurrentMuscleTuple.b = Jtp.segment(mRootJointDof,n-mRootJointDof);
@@ -222,7 +222,8 @@ Step()
 	else
 	{
 		GetDesiredTorques();  
-		mCharacter->GetSkeleton()->setForces(mDesiredTorque);
+		// mDesiredTorque[15] += -100; 
+		mCharacter->GetSkeleton()->setForces(mDesiredTorque); 
 	}
 
 	mWorld->step();   
@@ -239,11 +240,11 @@ Step()
 
 Eigen::VectorXd
 Environment::
-GetDesiredTorques()
+GetDesiredTorques()   
 {
 	Eigen::VectorXd p_des = mTargetPositions;
 	p_des.tail(mTargetPositions.rows()-mRootJointDof) += mAction;
-	mDesiredTorque = mCharacter->GetSPDForces(p_des);
+	mDesiredTorque = mCharacter->GetSPDForces(p_des);  
 	return mDesiredTorque.tail(mDesiredTorque.rows()-mRootJointDof);  
 }   
 
@@ -374,7 +375,7 @@ GetReward()
 
 	auto ees = mCharacter->GetEndEffectors();
 	Eigen::VectorXd ee_diff(ees.size()*3);
-	Eigen::VectorXd com_diff;
+	Eigen::VectorXd com_diff;  
 
 	for(int i =0;i<ees.size();i++)
 		ee_diff.segment<3>(i*3) = ees[i]->getCOM();
